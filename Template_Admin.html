@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Absensi RAY — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root{
+    --bg:#eef1f6; --card:#ffffff; --border:#e3e7ee;
+    --navy:#17385c; --navy-dark:#0f2740; --navy-soft:#eaf0f6;
+    --tan:#e4d9c4; --tan-text:#8a7a5c;
+    --text:#1f2937; --muted:#7c8798;
+    --green-bg:#e7f7ee; --green-text:#1a9a56; --green:#1a9a56;
+    --red-bg:#fdecea; --red-text:#d5453a; --red:#d5453a;
+    --radius:14px; --radius-sm:10px;
+    --shadow:0 1px 2px rgba(16,30,54,.04), 0 4px 14px rgba(16,30,54,.06);
+    --f-body:'Inter',sans-serif; --f-mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--bg); color:var(--text); font-family:var(--f-body); min-height:100vh;}
+  h1,h2,h3,.display{font-weight:700; margin:0;}
+  .mono{font-family:var(--f-mono);}
+  .muted{color:var(--muted);}
+  .hidden{display:none !important;}
+  button,select,input{font-family:var(--f-body);}
+
+  .center-screen{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;}
+  .login-card{width:100%; max-width:380px; background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:26px; box-shadow:var(--shadow);}
+  .login-card .brand{font-size:12.5px; letter-spacing:1.5px; color:var(--muted); text-align:center; font-weight:700;}
+  .login-card h1{font-size:26px; text-align:center; margin-top:4px; margin-bottom:4px; color:var(--navy);}
+
+  label{display:block; font-size:12.5px; color:var(--muted); font-weight:600; margin:12px 0 6px;}
+  label:first-child{margin-top:0;}
+  input[type=password],input[type=text],input[type=number],select{
+    width:100%; background:#fbfcfe; border:1px solid var(--border); color:var(--text);
+    padding:10px 11px; border-radius:var(--radius-sm); font-size:14px;
+  }
+  input:focus,select:focus,button:focus-visible{outline:2px solid var(--navy); outline-offset:1px;}
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    padding:10px 16px; border-radius:var(--radius-sm); border:1px solid transparent;
+    font-size:14.5px; font-weight:700; cursor:pointer; margin-top:12px; transition:opacity .15s, transform .1s;
+  }
+  .btn:active{transform:scale(.98);}
+  .btn:disabled{opacity:.45; cursor:not-allowed;}
+  .btn-navy,.btn-primary{background:var(--navy); color:#fff; width:100%;}
+  .btn-green{background:var(--green); color:#fff;}
+  .btn-outline{background:#fff; border-color:var(--border); color:var(--navy);}
+  .btn-danger{background:#fff; border-color:var(--red); color:var(--red);}
+  .btn-sm{padding:6px 12px; font-size:12.5px; margin-top:0; width:auto;}
+
+  /* app shell */
+  .app{display:none;}
+  .app.show{display:block;}
+  header.top{
+    background:var(--card); border-bottom:1px solid var(--border);
+    padding:14px 20px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:10;
+  }
+  header.top .brand-block{display:flex; align-items:center; gap:10px;}
+  header.top .brand-block .display{font-size:19px; color:var(--navy);}
+  .role-tag{
+    font-family:var(--f-mono); font-size:11px; padding:2px 8px; border-radius:99px; border:1px solid var(--border); color:var(--muted);
+  }
+  .role-tag.internal{border-color:var(--navy); color:var(--navy); background:var(--navy-soft);}
+  .filter-group{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .filter-group select,.filter-group input{width:auto; padding:7px 9px; font-size:13px;}
+  .filter-group label{margin:0; white-space:nowrap;}
+
+  nav.tabs{
+    display:flex; gap:2px; overflow-x:auto; background:var(--card); border-bottom:1px solid var(--border);
+    padding:0 20px;
+  }
+  nav.tabs button{
+    background:none; border:none; color:var(--muted); padding:12px 16px;
+    font-size:14.5px; font-weight:600; cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap;
+  }
+  nav.tabs button.active{color:var(--navy); border-bottom-color:var(--navy);}
+
+  main{max-width:1100px; margin:0 auto; padding:22px 20px 60px;}
+  .tabpanel{display:none;}
+  .tabpanel.active{display:block;}
+
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin-bottom:20px;}
+  .stat-tile{background:var(--card); border:1px solid var(--border); border-left:3px solid var(--navy); border-radius:var(--radius-sm); padding:14px; box-shadow:var(--shadow);}
+  .stat-tile .num{font-size:28px; line-height:1; font-weight:700; color:var(--navy);}
+  .stat-tile .lb{font-size:12px; color:var(--muted); margin-top:4px;}
+
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:16px; box-shadow:var(--shadow);}
+  .section-title{font-size:15.5px; font-weight:700; margin-bottom:12px; color:var(--navy);}
+
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  th,td{text-align:left; padding:9px 8px; border-bottom:1px solid var(--border); white-space:nowrap;}
+  th{color:var(--muted); font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:.3px;}
+  td.num,th.num{font-family:var(--f-mono); text-align:right;}
+  .table-scroll{overflow-x:auto;}
+
+  .chart{display:flex; align-items:flex-end; gap:14px; height:160px; padding:10px 4px 0;}
+  .chart .bar-group{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%;}
+  .chart .bars{display:flex; align-items:flex-end; gap:3px; height:130px;}
+  .chart .bars .b{width:9px; border-radius:2px 2px 0 0;}
+  .chart .bars .b.hadir{background:var(--green);}
+  .chart .bars .b.telat{background:var(--red);}
+  .chart .bars .b.ijin{background:var(--tan-text);}
+  .chart .lb{font-size:11px; color:var(--muted); margin-top:6px; font-family:var(--f-mono);}
+  .legend{display:flex; gap:16px; font-size:12px; color:var(--muted); margin-top:6px;}
+  .legend span{display:inline-flex; align-items:center; gap:5px;}
+  .legend i{width:9px; height:9px; border-radius:2px; display:inline-block;}
+
+  .subtabs{display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;}
+  .subtabs button{background:var(--navy-soft); border:1px solid var(--border); color:var(--muted); padding:7px 14px; border-radius:99px; cursor:pointer; font-size:13px; font-weight:600;}
+  .subtabs button.active{color:var(--navy); border-color:var(--navy); background:#fff;}
+
+  .approval-item{background:var(--card); border:1px solid var(--border); border-left:3px solid var(--navy); border-radius:var(--radius-sm); padding:14px; margin-bottom:10px; box-shadow:var(--shadow);}
+  .approval-item .row{display:flex; justify-content:space-between; font-size:13px; padding:3px 0; gap:10px;}
+  .approval-item .row .k{color:var(--muted);}
+  .approval-item .actions{display:flex; gap:8px; margin-top:10px;}
+  .approval-item a{color:var(--navy); font-size:12px; font-weight:600;}
+
+  .empty-state{text-align:center; padding:40px 16px; color:var(--muted);}
+  .empty-state .big{font-size:32px; margin-bottom:6px;}
+
+  .chat-log{display:flex; flex-direction:column; gap:12px; margin-bottom:14px; max-height:60vh; overflow-y:auto; padding-right:4px;}
+  .chat-msg{max-width:80%; padding:10px 13px; border-radius:var(--radius-sm); font-size:14px; line-height:1.5; white-space:pre-wrap;}
+  .chat-msg.user{align-self:flex-end; background:var(--navy); color:#fff;}
+  .chat-msg.ai{align-self:flex-start; background:var(--navy-soft); border:1px solid var(--border);}
+  .chat-input-row{display:flex; gap:8px;}
+  .chat-input-row textarea{
+    flex:1; background:#fbfcfe; border:1px solid var(--border); color:var(--text); border-radius:var(--radius-sm);
+    padding:10px 12px; font-size:14px; font-family:var(--f-body); resize:none; min-height:44px;
+  }
+
+  .toast{
+    position:fixed; right:20px; bottom:20px; max-width:340px; background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius-sm); padding:12px 14px; font-size:13px; z-index:50; box-shadow:0 6px 20px rgba(16,30,54,.18);
+  }
+  .toast.ok{border-left:3px solid var(--green);}
+  .toast.err{border-left:3px solid var(--red);}
+
+  /* ===== KELOLA DATA (form + tabel) ===== */
+  .kd-form-row{display:flex; gap:8px; flex-wrap:wrap;}
+  .kd-form-row .btn{flex:none;}
+  .action-cell{display:flex; gap:6px; flex-wrap:wrap;}
+
+  /* ===== QR MODAL ===== */
+  .qr-modal{
+    position:fixed; inset:0; background:rgba(15,39,64,.55); display:flex; align-items:center; justify-content:center;
+    z-index:60; padding:20px;
+  }
+  .qr-modal-inner{background:var(--card); border-radius:var(--radius); padding:22px; max-width:320px; width:100%; text-align:center; box-shadow:var(--shadow);}
+  #qr-canvas-box,#qrweb-box{display:flex; justify-content:center; padding:10px; background:#fff; border-radius:var(--radius-sm);}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<section id="screen-login" class="center-screen">
+  <div class="login-card">
+    <div class="brand">PT. RAY MITRA PERKASA</div>
+    <h1>Panel Admin</h1>
+    <div class="muted" id="subtitle-klien" style="text-align:center; margin:-2px 0 14px; font-size:13px;"></div>
+    <label>Password Admin</label>
+    <input type="password" id="login-password" placeholder="Masukkan password">
+    <button class="btn btn-primary" id="btn-login-admin">Masuk</button>
+  </div>
+</section>
+
+<!-- ================= APP SHELL ================= -->
+<div class="app" id="app">
+  <header class="top">
+    <div class="brand-block">
+      <img src="icon-192.png" alt="logo" style="width:30px; height:30px; border-radius:7px;">
+      <div class="display" id="brand-header">Absensi RAY</div>
+      <span class="role-tag" id="role-tag">-</span>
+    </div>
+    <div class="filter-group">
+      <label>Bulan</label>
+      <select id="filter-bulan"></select>
+      <label>Tahun</label>
+      <input type="number" id="filter-tahun" style="width:80px;">
+      <button class="btn btn-outline btn-sm" id="btn-terapkan-filter">Terapkan</button>
+      <button class="btn btn-danger btn-sm" id="btn-logout-admin">Keluar</button>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button data-tab="absensi" class="active">Dashboard Absensi</button>
+    <button data-tab="patroli">Dashboard Patroli</button>
+    <button data-tab="cleaning">Dashboard Cleaning</button>
+    <button data-tab="kelola" id="tab-btn-kelola">Kelola Data</button>
+    <button data-tab="persetujuan" id="tab-btn-persetujuan">Persetujuan</button>
+    <button data-tab="ai">Tanya AI</button>
+  </nav>
+
+  <main>
+    <!-- ===== TAB: ABSENSI ===== -->
+    <section class="tabpanel active" id="tab-absensi">
+      <div class="stat-grid" id="absensi-stats"></div>
+      <div class="panel">
+        <div class="section-title">Tren 6 Bulan Terakhir</div>
+        <div class="chart" id="absensi-chart"></div>
+        <div class="legend">
+          <span><i style="background:var(--green)"></i>Hadir</span>
+          <span><i style="background:var(--red)"></i>Telat</span>
+          <span><i style="background:var(--tan-text)"></i>Ijin</span>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="section-title">Per Karyawan</div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Nama</th><th>Bagian</th><th class="num">Hadir</th><th class="num">Telat</th><th class="num">Ijin</th><th class="num">% Hadir</th></tr></thead>
+            <tbody id="absensi-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: PATROLI ===== -->
+    <section class="tabpanel" id="tab-patroli">
+      <div class="stat-grid" id="patroli-stats"></div>
+      <div class="panel">
+        <div class="section-title">Per Staf Security</div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Nama</th><th class="num">Lapor Bulan Ini</th><th class="num">Rata-rata/Hari</th><th>Terakhir Lapor</th></tr></thead>
+            <tbody id="patroli-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: CLEANING ===== -->
+    <section class="tabpanel" id="tab-cleaning">
+      <div class="stat-grid" id="cleaning-stats"></div>
+      <div class="panel">
+        <div class="section-title">Per Staf Cleaning Service</div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Nama</th><th class="num">Lapor Bulan Ini</th><th class="num">Rata-rata/Hari</th><th>Terakhir Lapor</th></tr></thead>
+            <tbody id="cleaning-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: KELOLA DATA (khusus admin internal) ===== -->
+    <section class="tabpanel" id="tab-kelola">
+      <div class="subtabs" data-target="grp-kelola">
+        <button data-sub="karyawan" class="active">Karyawan</button>
+        <button data-sub="lokasi">Lokasi Absensi</button>
+        <button data-sub="patroli">Titik Patroli</button>
+        <button data-sub="tugas">Tugas Kebersihan</button>
+        <button data-sub="jamkerja">Jam Kerja</button>
+        <button data-sub="qrweb">QR Akses Web</button>
+      </div>
+      <div id="grp-kelola">
+        <div data-sub-panel="karyawan" id="sub-karyawan"></div>
+        <div data-sub-panel="lokasi" id="sub-lokasi" class="hidden"></div>
+        <div data-sub-panel="patroli" id="sub-patroli" class="hidden"></div>
+        <div data-sub-panel="tugas" id="sub-tugas" class="hidden"></div>
+        <div data-sub-panel="jamkerja" id="sub-jamkerja" class="hidden"></div>
+        <div data-sub-panel="qrweb" id="sub-qrweb" class="hidden">
+          <div class="panel">
+            <div class="section-title">QR Akses Web Karyawan</div>
+            <p class="muted" style="font-size:13px; margin-top:-6px;">Tempel link GitHub Pages web absensi karyawan (index.html), lalu generate QR-nya. Link ini otomatis diingat di browser ini untuk generate berikutnya.</p>
+            <label>Link Web Karyawan</label>
+            <input type="text" id="qrweb-link" placeholder="https://namaanda.github.io/nama-repo/">
+            <button class="btn btn-navy" id="btn-generate-qrweb" style="width:auto;">Generate QR</button>
+            <div id="qrweb-box" style="margin-top:16px; display:none;"></div>
+            <button class="btn btn-outline hidden" id="btn-download-qrweb" style="width:auto;">Download PNG</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: PERSETUJUAN ===== -->
+    <section class="tabpanel" id="tab-persetujuan">
+      <div class="subtabs" data-target="grp-persetujuan">
+        <button data-sub="pendaftaran" class="active">Pendaftaran Baru</button>
+        <button data-sub="ijin">Pengajuan Ijin</button>
+      </div>
+      <div id="grp-persetujuan">
+        <div data-sub-panel="pendaftaran" id="sub-pendaftaran"></div>
+        <div data-sub-panel="ijin" id="sub-ijin" class="hidden"></div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: AI ===== -->
+    <section class="tabpanel" id="tab-ai">
+      <div class="panel">
+        <div class="section-title">Tanya Admin AI</div>
+        <p class="muted" style="font-size:13px; margin-top:-6px;">AI menjawab berdasarkan data KPI bulan/tahun yang sedang dipilih di atas. Bersifat read-only, tidak bisa melakukan aksi apapun.</p>
+        <div class="chat-log" id="chat-log"></div>
+        <div class="chat-input-row">
+          <textarea id="chat-input" placeholder="Contoh: siapa yang paling sering telat bulan ini?"></textarea>
+          <button class="btn btn-primary" id="btn-chat-send" style="margin-top:0; width:auto;">Kirim</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ===== MODAL QR (titik patroli / tugas kebersihan) ===== -->
+<div id="qr-modal" class="qr-modal hidden">
+  <div class="qr-modal-inner">
+    <div class="section-title" id="qr-modal-title">QR Kode</div>
+    <div id="qr-canvas-box"></div>
+    <div style="display:flex; gap:8px; margin-top:14px;">
+      <button class="btn btn-navy" id="btn-download-qr" style="margin-top:0;">Download PNG</button>
+      <button class="btn btn-outline" style="margin-top:0;" onclick="tutupQrModal()">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script>
+const API_URL = '__API_URL__';
+
+let adminPassword = '';
+let peran = '';
+let filterBulan, filterTahun;
+
+async function api(action, payload) {
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(Object.assign({ action }, payload || {}))
+    });
+    return await res.json();
+  } catch (e) {
+    return { sukses: false, pesan: 'Gagal terhubung ke server.' };
+  }
+}
+function showToast(pesan, ok) {
+  const t = document.getElementById('toast');
+  t.textContent = pesan;
+  t.className = 'toast ' + (ok ? 'ok' : 'err');
+  t.classList.remove('hidden');
+  clearTimeout(showToast._tm);
+  showToast._tm = setTimeout(() => t.classList.add('hidden'), 3800);
+}
+function setBusy(btn, busy, labelBusy, labelNormal) {
+  btn.disabled = busy;
+  btn.textContent = busy ? (labelBusy || 'Memproses...') : labelNormal;
+}
+
+/* ===== INFO SISTEM (nama klien, dari spreadsheet klien ini) ===== */
+// Kode ini sama untuk semua klien - nama klien diambil lewat API, bukan hardcode,
+// supaya file admin.html ini bisa dipakai apa adanya di semua repo GitHub klien.
+async function muatInfoSistem() {
+  const res = await api('infoSistem', {});
+  const nama = (res && res.sukses && res.namaKlien) ? res.namaKlien : '';
+  document.title = 'Admin — ' + (nama || 'Absensi RAY');
+  const sub = document.getElementById('subtitle-klien');
+  if (sub) sub.textContent = nama ? ('Klien: ' + nama) : '';
+  const brand = document.getElementById('brand-header');
+  if (brand) brand.textContent = nama ? ('Absensi RAY · ' + nama) : 'Absensi RAY';
+}
+muatInfoSistem();
+
+/* ===== LOGIN ===== */
+document.getElementById('btn-login-admin').addEventListener('click', async () => {
+  const pass = document.getElementById('login-password').value;
+  if (!pass) return showToast('Masukkan password.', false);
+  const btn = document.getElementById('btn-login-admin');
+  setBusy(btn, true, 'Memeriksa...', 'Masuk');
+  const res = await api('loginAdmin', { password: pass });
+  setBusy(btn, false, '', 'Masuk');
+  if (!res.sukses) return showToast(res.pesan || 'Password salah.', false);
+  adminPassword = pass;
+  peran = res.peran;
+  masukKeApp();
+});
+document.getElementById('login-password').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('btn-login-admin').click();
+});
+document.getElementById('btn-logout-admin').addEventListener('click', () => {
+  adminPassword = ''; peran = '';
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('screen-login').style.display = 'flex';
+  document.getElementById('login-password').value = '';
+});
+
+function masukKeApp() {
+  document.getElementById('screen-login').style.display = 'none';
+  document.getElementById('app').classList.add('show');
+  const roleTag = document.getElementById('role-tag');
+  roleTag.textContent = peran === 'internal' ? 'ADMIN INTERNAL' : 'ADMIN CLIENT';
+  roleTag.classList.toggle('internal', peran === 'internal');
+  document.getElementById('tab-btn-persetujuan').classList.toggle('hidden', peran !== 'internal');
+  document.getElementById('tab-btn-kelola').classList.toggle('hidden', peran !== 'internal');
+
+  const now = new Date();
+  filterBulan = now.getMonth() + 1; filterTahun = now.getFullYear();
+  const selBulan = document.getElementById('filter-bulan');
+  const namaBulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  selBulan.innerHTML = namaBulan.map((n,i) => '<option value="'+(i+1)+'">'+n+'</option>').join('');
+  selBulan.value = filterBulan;
+  document.getElementById('filter-tahun').value = filterTahun;
+
+  muatSemuaDashboard();
+}
+document.getElementById('btn-terapkan-filter').addEventListener('click', () => {
+  filterBulan = parseInt(document.getElementById('filter-bulan').value, 10);
+  filterTahun = parseInt(document.getElementById('filter-tahun').value, 10);
+  muatSemuaDashboard();
+});
+
+/* ===== NAVIGASI TAB UTAMA ===== */
+document.getElementById('tabs').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-tab]');
+  if (!btn) return;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tabpanel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  if (btn.dataset.tab === 'persetujuan') muatPersetujuan();
+  if (btn.dataset.tab === 'kelola') { muatKelola('karyawan'); initQrWeb(); }
+});
+
+/* ===== NAVIGASI SUB-TAB (dipakai bareng oleh Persetujuan & Kelola Data) ===== */
+document.querySelectorAll('.subtabs[data-target]').forEach(group => {
+  const wrap = document.getElementById(group.dataset.target);
+  group.querySelectorAll('button').forEach(b => {
+    b.addEventListener('click', () => {
+      group.querySelectorAll('button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      wrap.querySelectorAll('[data-sub-panel]').forEach(p => p.classList.add('hidden'));
+      wrap.querySelector('[data-sub-panel="' + b.dataset.sub + '"]').classList.remove('hidden');
+      if (group.dataset.target === 'grp-kelola') {
+        if (b.dataset.sub === 'qrweb') initQrWeb(); else muatKelola(b.dataset.sub);
+      }
+    });
+  });
+});
+
+/* ===== LOAD DASHBOARDS ===== */
+function muatSemuaDashboard() {
+  muatDashboardAbsensi();
+  muatDashboardOperasional('ambilDashboardPatroli', 'patroli-stats', 'patroli-table');
+  muatDashboardOperasional('ambilDashboardCleaning', 'cleaning-stats', 'cleaning-table');
+}
+
+function statTile(num, label) {
+  return '<div class="stat-tile"><div class="num">' + num + '</div><div class="lb">' + label + '</div></div>';
+}
+
+async function muatDashboardAbsensi() {
+  const res = await api('ambilDashboardKPI', { password: adminPassword, bulan: filterBulan, tahun: filterTahun });
+  if (!res.sukses) return showToast(res.pesan, false);
+  const kpi = res.kpi;
+  const r = kpi.ringkasan;
+  document.getElementById('absensi-stats').innerHTML =
+    statTile(r.totalKaryawan, 'Total Karyawan') +
+    statTile(r.totalHadir, 'Total Hadir') +
+    statTile(r.totalTelat, 'Total Telat') +
+    statTile(r.totalIjin, 'Ijin Disetujui') +
+    statTile(r.rataRataKehadiran + '%', 'Rata-rata Kehadiran');
+
+  const maxVal = Math.max(1, ...kpi.grafik.flatMap(g => [g.hadir, g.telat, g.ijin]));
+  document.getElementById('absensi-chart').innerHTML = kpi.grafik.map(g =>
+    '<div class="bar-group">' +
+      '<div class="bars">' +
+        '<div class="b hadir" style="height:' + (g.hadir/maxVal*130) + 'px" title="Hadir: '+g.hadir+'"></div>' +
+        '<div class="b telat" style="height:' + (g.telat/maxVal*130) + 'px" title="Telat: '+g.telat+'"></div>' +
+        '<div class="b ijin" style="height:' + (g.ijin/maxVal*130) + 'px" title="Ijin: '+g.ijin+'"></div>' +
+      '</div>' +
+      '<div class="lb">' + g.label + '</div>' +
+    '</div>'
+  ).join('');
+
+  document.getElementById('absensi-table').innerHTML = kpi.perKaryawan.map(k =>
+    '<tr><td>'+k.nama+'</td><td class="muted">'+k.bagianKerja+'</td>' +
+    '<td class="num">'+k.hadir+'</td><td class="num">'+k.telat+'</td><td class="num">'+k.ijin+'</td>' +
+    '<td class="num">'+k.persenKehadiran+'%</td></tr>'
+  ).join('') || '<tr><td colspan="6" class="muted">Tidak ada data.</td></tr>';
+}
+
+async function muatDashboardOperasional(action, statsId, tableId) {
+  const res = await api(action, { password: adminPassword, bulan: filterBulan, tahun: filterTahun });
+  if (!res.sukses) return showToast(res.pesan, false);
+  const kpi = res.kpi;
+  document.getElementById(statsId).innerHTML =
+    statTile(kpi.totalStaf, 'Total Staf') +
+    statTile(kpi.hariKerja, 'Hari Kerja Berjalan');
+  document.getElementById(tableId).innerHTML = kpi.perStaf.map(s =>
+    '<tr><td>'+s.nama+'</td><td class="num">'+s.jumlahLapor+'</td><td class="num">'+s.rataRataPerHari+'</td><td class="mono">'+s.terakhirLapor+'</td></tr>'
+  ).join('') || '<tr><td colspan="4" class="muted">Belum ada staf terdaftar untuk divisi ini.</td></tr>';
+}
+
+/* ===== PERSETUJUAN ===== */
+async function muatPersetujuan() {
+  if (peran !== 'internal') return;
+  const [resDaftar, resIjin] = await Promise.all([
+    api('daftarPendaftaranBaru', { password: adminPassword }),
+    api('daftarIjinAdmin', { password: adminPassword })
+  ]);
+  renderPendaftaran(resDaftar.daftar || []);
+  renderIjin(resIjin.daftar || []);
+}
+
+function renderPendaftaran(list) {
+  const box = document.getElementById('sub-pendaftaran');
+  if (!list.length) { box.innerHTML = '<div class="empty-state"><div class="big">✅</div>Tidak ada pendaftaran menunggu persetujuan.</div>'; return; }
+  box.innerHTML = list.map(d =>
+    '<div class="approval-item">' +
+      '<div class="row"><span class="k">Nama</span><span>'+d.nama+'</span></div>' +
+      '<div class="row"><span class="k">Bagian Kerja</span><span>'+d.bagianKerja+'</span></div>' +
+      '<div class="row"><span class="k">PIN</span><span class="mono">'+d.pin+'</span></div>' +
+      '<div class="row"><span class="k">Tanggal Daftar</span><span class="mono">'+d.tanggalDaftar+'</span></div>' +
+      '<div class="actions">' +
+        '<button class="btn btn-green btn-sm" onclick="prosesPendaftaran('+d.baris+',true)">Setujui</button>' +
+        '<button class="btn btn-danger btn-sm" onclick="prosesPendaftaran('+d.baris+',false)">Tolak</button>' +
+      '</div>' +
+    '</div>'
+  ).join('');
+}
+function renderIjin(list) {
+  const box = document.getElementById('sub-ijin');
+  if (!list.length) { box.innerHTML = '<div class="empty-state"><div class="big">✅</div>Tidak ada pengajuan ijin menunggu persetujuan.</div>'; return; }
+  box.innerHTML = list.map(d =>
+    '<div class="approval-item">' +
+      '<div class="row"><span class="k">Nama</span><span>'+d.nama+'</span></div>' +
+      '<div class="row"><span class="k">Jenis</span><span>'+d.jenisIjin+'</span></div>' +
+      '<div class="row"><span class="k">Tanggal Ijin</span><span class="mono">'+d.tanggalIjin+'</span></div>' +
+      '<div class="row"><span class="k">Keterangan</span><span>'+(d.keterangan||'-')+'</span></div>' +
+      '<div class="row"><span class="k">Bukti</span><a href="'+d.linkBukti+'" target="_blank" rel="noopener">Lihat File</a></div>' +
+      '<div class="actions">' +
+        '<button class="btn btn-green btn-sm" onclick="prosesIjin('+d.baris+',true)">Setujui</button>' +
+        '<button class="btn btn-danger btn-sm" onclick="prosesIjin('+d.baris+',false)">Tolak</button>' +
+      '</div>' +
+    '</div>'
+  ).join('');
+}
+async function prosesPendaftaran(baris, setujui) {
+  const res = await api(setujui ? 'setujuiPendaftaran' : 'tolakPendaftaran', { password: adminPassword, baris });
+  showToast(res.pesan, res.sukses);
+  if (res.sukses) muatPersetujuan();
+}
+async function prosesIjin(baris, setujui) {
+  const res = await api(setujui ? 'setujuiIjin' : 'tolakIjin', { password: adminPassword, baris });
+  showToast(res.pesan, res.sukses);
+  if (res.sukses) muatPersetujuan();
+}
+
+/* ===== KELOLA DATA (generik untuk 5 data master) ===== */
+const ENTITAS_KELOLA = {
+  karyawan: {
+    title: 'Karyawan',
+    listAction: 'getDaftarKaryawanAdmin', addAction: 'tambahKaryawanAdmin',
+    editAction: 'editKaryawanAdmin', delAction: 'hapusKaryawanAdmin',
+    fields: [
+      { key: 'nama', label: 'Nama', type: 'text' },
+      { key: 'noHp', label: 'No HP (opsional)', type: 'text' },
+      { key: 'alamat', label: 'Alamat (opsional)', type: 'text' },
+      { key: 'bagianKerja', label: 'Bagian Kerja', type: 'select', options: ['Security','Cleaning Service','Administrasi','Lainnya'] },
+      { key: 'pin', label: 'PIN (4 digit)', type: 'text' }
+    ]
+  },
+  lokasi: {
+    title: 'Lokasi Absensi',
+    listAction: 'getDaftarLokasiAdmin', addAction: 'tambahLokasiAdmin',
+    editAction: 'editLokasiAdmin', delAction: 'hapusLokasiAdmin',
+    fields: [
+      { key: 'nama', label: 'Nama Lokasi', type: 'text' },
+      { key: 'lat', label: 'Latitude', type: 'text' },
+      { key: 'lng', label: 'Longitude', type: 'text' },
+      { key: 'radius', label: 'Radius', type: 'number' },
+      { key: 'satuan', label: 'Satuan Radius', type: 'select', options: ['Meter','KM'] }
+    ]
+  },
+  patroli: {
+    title: 'Titik Patroli',
+    listAction: 'getDaftarTitikPatroliAdmin', addAction: 'tambahTitikPatroliAdmin',
+    editAction: 'editTitikPatroliAdmin', delAction: 'hapusTitikPatroliAdmin',
+    qr: true, qrField: 'kodeQr', qrJudulField: 'namaPos',
+    fields: [
+      { key: 'namaPos', label: 'Nama Titik/Pos', type: 'text' },
+      { key: 'lat', label: 'Latitude', type: 'text' },
+      { key: 'lng', label: 'Longitude', type: 'text' },
+      { key: 'radius', label: 'Radius', type: 'number' },
+      { key: 'satuan', label: 'Satuan Radius', type: 'select', options: ['Meter','KM'] },
+      { key: 'kodeQr', label: 'Kode Titik (isi QR)', type: 'text' }
+    ]
+  },
+  tugas: {
+    title: 'Tugas Kebersihan',
+    listAction: 'getDaftarTugasAdmin', addAction: 'tambahTugasAdmin',
+    editAction: 'editTugasAdmin', delAction: 'hapusTugasAdmin',
+    qr: true, qrField: 'kodeQr', qrJudulField: 'namaTugas',
+    fields: [
+      { key: 'namaTugas', label: 'Nama Tugas', type: 'text' },
+      { key: 'area', label: 'Area/Lokasi', type: 'text' },
+      { key: 'lat', label: 'Latitude (opsional)', type: 'text' },
+      { key: 'lng', label: 'Longitude (opsional)', type: 'text' },
+      { key: 'radius', label: 'Radius', type: 'number' },
+      { key: 'satuan', label: 'Satuan Radius', type: 'select', options: ['Meter','KM'] },
+      { key: 'kodeQr', label: 'Kode Titik (isi QR)', type: 'text' },
+      { key: 'keterangan', label: 'Keterangan (opsional)', type: 'text' }
+    ]
+  },
+  jamkerja: {
+    title: 'Jam Kerja Standar',
+    listAction: 'getDaftarJamKerjaAdmin', addAction: 'tambahJamKerjaAdmin',
+    editAction: 'editJamKerjaAdmin', delAction: 'hapusJamKerjaAdmin',
+    fields: [
+      { key: 'bagianKerja', label: 'Bagian Kerja', type: 'select', options: ['Security','Cleaning Service','Administrasi','Lainnya'] },
+      { key: 'jamMasuk', label: 'Jam Masuk Standar (HH:mm)', type: 'text' },
+      { key: 'toleransi', label: 'Toleransi (menit)', type: 'number' }
+    ]
+  }
+};
+let kelolaCache = {};
+
+async function muatKelola(key) {
+  const cfg = ENTITAS_KELOLA[key];
+  const box = document.getElementById('sub-' + key);
+  const res = await api(cfg.listAction, { password: adminPassword });
+  if (!res.sukses) { box.innerHTML = '<div class="empty-state">' + res.pesan + '</div>'; return; }
+  kelolaCache[key] = res.daftar || [];
+  renderFormKelola(key, box, cfg);
+  renderTabelKelola(key, box, cfg);
+  document.getElementById('kd-' + key + '-form').addEventListener('submit', e => { e.preventDefault(); simpanKelola(key); });
+}
+
+function renderFormKelola(key, box, cfg) {
+  const formHtml =
+    '<div class="panel">' +
+      '<div class="section-title" id="kd-' + key + '-formtitle">Tambah ' + cfg.title + '</div>' +
+      '<form id="kd-' + key + '-form">' +
+        '<input type="hidden" id="kd-' + key + '-baris" value="">' +
+        cfg.fields.map(f => {
+          if (f.type === 'select') {
+            return '<label>' + f.label + '</label><select id="kd-' + key + '-' + f.key + '">' +
+              f.options.map(o => '<option value="' + o + '">' + o + '</option>').join('') + '</select>';
+          }
+          return '<label>' + f.label + '</label><input type="' + f.type + '" id="kd-' + key + '-' + f.key + '">';
+        }).join('') +
+        '<div class="kd-form-row">' +
+          '<button type="submit" class="btn btn-navy" style="width:auto;">Simpan</button>' +
+          '<button type="button" class="btn btn-outline" style="width:auto;" onclick="resetFormKelola(\'' + key + '\')">Batal Edit</button>' +
+        '</div>' +
+      '</form>' +
+    '</div>';
+  // panel form ditaruh sebelum tabel - simpan slot tabel terpisah supaya tidak perlu render ulang form saat refresh tabel
+  box.innerHTML = formHtml + '<div id="kd-' + key + '-tabel"></div>';
+}
+
+function renderTabelKelola(key, box, cfg) {
+  const daftar = kelolaCache[key] || [];
+  const tabelBox = document.getElementById('kd-' + key + '-tabel');
+  const html =
+    '<div class="panel">' +
+      '<div class="section-title">Daftar ' + cfg.title + '</div>' +
+      '<div class="table-scroll"><table><thead><tr>' +
+        cfg.fields.map(f => '<th>' + f.label + '</th>').join('') + '<th></th>' +
+      '</tr></thead><tbody>' +
+        (daftar.length
+          ? daftar.map(d =>
+              '<tr>' + cfg.fields.map(f => '<td>' + (d[f.key] !== undefined && d[f.key] !== null ? d[f.key] : '') + '</td>').join('') +
+              '<td class="action-cell">' +
+                '<button class="btn btn-outline btn-sm" onclick="isiFormEdit(\'' + key + '\', ' + d.baris + ')">Edit</button>' +
+                (cfg.qr ? '<button class="btn btn-outline btn-sm" onclick="tampilkanQr(\'' + String(d[cfg.qrField] || '').replace(/'/g,"\\'") + '\', \'' + String(d[cfg.qrJudulField] || '').replace(/'/g,"\\'") + '\')">QR</button>' : '') +
+                '<button class="btn btn-danger btn-sm" onclick="hapusKelola(\'' + key + '\', ' + d.baris + ')">Hapus</button>' +
+              '</td></tr>'
+            ).join('')
+          : '<tr><td colspan="' + (cfg.fields.length + 1) + '" class="muted">Belum ada data.</td></tr>') +
+      '</tbody></table></div>' +
+    '</div>';
+  tabelBox.innerHTML = html;
+}
+
+function isiFormEdit(key, baris) {
+  const cfg = ENTITAS_KELOLA[key];
+  const item = (kelolaCache[key] || []).find(x => x.baris === baris);
+  if (!item) return;
+  document.getElementById('kd-' + key + '-baris').value = baris;
+  cfg.fields.forEach(f => {
+    const el = document.getElementById('kd-' + key + '-' + f.key);
+    if (el) el.value = (item[f.key] !== undefined && item[f.key] !== null) ? item[f.key] : '';
+  });
+  document.getElementById('kd-' + key + '-formtitle').textContent = 'Edit ' + cfg.title;
+  document.getElementById('kd-' + key + '-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function resetFormKelola(key) {
+  const cfg = ENTITAS_KELOLA[key];
+  document.getElementById('kd-' + key + '-baris').value = '';
+  cfg.fields.forEach(f => { const el = document.getElementById('kd-' + key + '-' + f.key); if (el) el.value = ''; });
+  document.getElementById('kd-' + key + '-formtitle').textContent = 'Tambah ' + cfg.title;
+}
+async function simpanKelola(key) {
+  const cfg = ENTITAS_KELOLA[key];
+  const baris = document.getElementById('kd-' + key + '-baris').value;
+  const payload = { password: adminPassword };
+  cfg.fields.forEach(f => { payload[f.key] = document.getElementById('kd-' + key + '-' + f.key).value.trim(); });
+  let res;
+  if (baris) {
+    payload.baris = parseInt(baris, 10);
+    res = await api(cfg.editAction, payload);
+  } else {
+    res = await api(cfg.addAction, payload);
+  }
+  showToast(res.pesan, res.sukses);
+  if (res.sukses) { resetFormKelola(key); muatKelola(key); }
+}
+async function hapusKelola(key, baris) {
+  if (!confirm('Yakin ingin menghapus data ini?')) return;
+  const cfg = ENTITAS_KELOLA[key];
+  const res = await api(cfg.delAction, { password: adminPassword, baris });
+  showToast(res.pesan, res.sukses);
+  if (res.sukses) muatKelola(key);
+}
+
+/* ===== QR: titik patroli / tugas kebersihan ===== */
+function tampilkanQr(kode, judul) {
+  if (!kode) return showToast('Titik ini belum punya Kode Titik. Isi dulu "Kode Titik" di form, baru QR bisa dibuat.', false);
+  document.getElementById('qr-modal-title').textContent = 'QR: ' + judul;
+  const box = document.getElementById('qr-canvas-box');
+  box.innerHTML = '';
+  new QRCode(box, { text: kode, width: 220, height: 220 });
+  document.getElementById('btn-download-qr').onclick = () => unduhQrDariBox(box, 'QR_' + judul.replace(/[^a-z0-9]+/gi, '_'));
+  document.getElementById('qr-modal').classList.remove('hidden');
+}
+function tutupQrModal() { document.getElementById('qr-modal').classList.add('hidden'); }
+function unduhQrDariBox(box, namaFile) {
+  const canvas = box.querySelector('canvas');
+  const img = box.querySelector('img');
+  const dataUrl = canvas ? canvas.toDataURL('image/png') : (img ? img.src : null);
+  if (!dataUrl) return showToast('QR belum siap, coba lagi.', false);
+  const a = document.createElement('a');
+  a.href = dataUrl; a.download = namaFile + '.png';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+/* ===== QR: link akses web karyawan ===== */
+function initQrWeb() {
+  const saved = localStorage.getItem('linkWebKaryawan');
+  if (saved) document.getElementById('qrweb-link').value = saved;
+}
+document.getElementById('btn-generate-qrweb').addEventListener('click', () => {
+  const link = document.getElementById('qrweb-link').value.trim();
+  if (!link) return showToast('Isi link web karyawan dulu.', false);
+  localStorage.setItem('linkWebKaryawan', link);
+  const box = document.getElementById('qrweb-box');
+  box.style.display = 'flex';
+  box.innerHTML = '';
+  new QRCode(box, { text: link, width: 240, height: 240 });
+  const btnDl = document.getElementById('btn-download-qrweb');
+  btnDl.classList.remove('hidden');
+  btnDl.onclick = () => unduhQrDariBox(box, 'QR_Akses_Web_Karyawan');
+});
+
+/* ===== CHATBOT AI ===== */
+function pushChat(role, text) {
+  const log = document.getElementById('chat-log');
+  const div = document.createElement('div');
+  div.className = 'chat-msg ' + role;
+  div.textContent = text;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
+document.getElementById('btn-chat-send').addEventListener('click', kirimChat);
+document.getElementById('chat-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); kirimChat(); }
+});
+async function kirimChat() {
+  const input = document.getElementById('chat-input');
+  const teks = input.value.trim();
+  if (!teks) return;
+  pushChat('user', teks);
+  input.value = '';
+  const btn = document.getElementById('btn-chat-send');
+  setBusy(btn, true, '...', 'Kirim');
+  const res = await api('tanyaAdminAI', { password: adminPassword, pertanyaan: teks, bulan: filterBulan, tahun: filterTahun });
+  setBusy(btn, false, '', 'Kirim');
+  pushChat('ai', res.sukses ? res.jawaban : ('⚠️ ' + res.pesan));
+}
+</script>
+</body>
+</html>
