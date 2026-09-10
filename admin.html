@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Absensi RAY — Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains&#43;Mono:wght@500;600&amp;display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
   :root{
@@ -54,7 +54,7 @@
   .btn-danger{background:#fff; border-color:var(--red); color:var(--red);}
   .btn-sm{padding:6px 12px; font-size:12.5px; margin-top:0; width:auto;}
 
-  /* app shell */
+   
   .app{display:none;}
   .app.show{display:block;}
   header.top{
@@ -142,12 +142,12 @@
   .toast.ok{border-left:3px solid var(--green);}
   .toast.err{border-left:3px solid var(--red);}
 
-  /* ===== KELOLA DATA (form + tabel) ===== */
+   
   .kd-form-row{display:flex; gap:8px; flex-wrap:wrap;}
   .kd-form-row .btn{flex:none;}
   .action-cell{display:flex; gap:6px; flex-wrap:wrap;}
 
-  /* ===== QR MODAL ===== */
+   
   .qr-modal{
     position:fixed; inset:0; background:rgba(15,39,64,.55); display:flex; align-items:center; justify-content:center;
     z-index:60; padding:20px;
@@ -158,7 +158,7 @@
 </head>
 <body>
 
-<!-- ================= LOGIN ================= -->
+
 <section id="screen-login" class="center-screen">
   <div class="login-card">
     <div class="brand">PT. RAY MITRA PERKASA</div>
@@ -170,7 +170,7 @@
   </div>
 </section>
 
-<!-- ================= APP SHELL ================= -->
+
 <div class="app" id="app">
   <header class="top">
     <div class="brand-block">
@@ -198,7 +198,7 @@
   </nav>
 
   <main>
-    <!-- ===== TAB: ABSENSI ===== -->
+    
     <section class="tabpanel active" id="tab-absensi">
       <div class="stat-grid" id="absensi-stats"></div>
       <div class="panel">
@@ -221,7 +221,7 @@
       </div>
     </section>
 
-    <!-- ===== TAB: PATROLI ===== -->
+    
     <section class="tabpanel" id="tab-patroli">
       <div class="stat-grid" id="patroli-stats"></div>
       <div class="panel">
@@ -235,7 +235,7 @@
       </div>
     </section>
 
-    <!-- ===== TAB: CLEANING ===== -->
+    
     <section class="tabpanel" id="tab-cleaning">
       <div class="stat-grid" id="cleaning-stats"></div>
       <div class="panel">
@@ -249,7 +249,7 @@
       </div>
     </section>
 
-    <!-- ===== TAB: KELOLA DATA (khusus admin internal) ===== -->
+    
     <section class="tabpanel" id="tab-kelola">
       <div class="subtabs" data-target="grp-kelola">
         <button data-sub="karyawan" class="active">Karyawan</button>
@@ -279,7 +279,7 @@
       </div>
     </section>
 
-    <!-- ===== TAB: PERSETUJUAN ===== -->
+    
     <section class="tabpanel" id="tab-persetujuan">
       <div class="subtabs" data-target="grp-persetujuan">
         <button data-sub="pendaftaran" class="active">Pendaftaran Baru</button>
@@ -291,7 +291,7 @@
       </div>
     </section>
 
-    <!-- ===== TAB: AI ===== -->
+    
     <section class="tabpanel" id="tab-ai">
       <div class="panel">
         <div class="section-title">Tanya Admin AI</div>
@@ -306,7 +306,7 @@
   </main>
 </div>
 
-<!-- ===== MODAL QR (titik patroli / tugas kebersihan) ===== -->
+
 <div id="qr-modal" class="qr-modal hidden">
   <div class="qr-modal-inner">
     <div class="section-title" id="qr-modal-title">QR Kode</div>
@@ -321,7 +321,7 @@
 <div id="toast" class="toast hidden"></div>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxXUWLfH0gYfs9rHndGbY0eLvV_TcfllYAUQ7uHqcZELrJux1vUCp-33wGdYkoRXKZH/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzsM7ILm515vsdEjotKEeSqg997305D_qcKZKqhLYNQWWp9E7s/exec';
 
 let adminPassword = '';
 let peran = '';
@@ -352,9 +352,9 @@ function setBusy(btn, busy, labelBusy, labelNormal) {
   btn.textContent = busy ? (labelBusy || 'Memproses...') : labelNormal;
 }
 
-/* ===== INFO SISTEM (nama klien, dari spreadsheet klien ini) ===== */
-// Kode ini sama untuk semua klien - nama klien diambil lewat API, bukan hardcode,
-// supaya file admin.html ini bisa dipakai apa adanya di semua repo GitHub klien.
+ 
+
+
 async function muatInfoSistem() {
   const res = await api('infoSistem', {});
   const nama = (res && res.sukses && res.namaKlien) ? res.namaKlien : '';
@@ -366,7 +366,7 @@ async function muatInfoSistem() {
 }
 muatInfoSistem();
 
-/* ===== LOGIN ===== */
+ 
 document.getElementById('btn-login-admin').addEventListener('click', async () => {
   const pass = document.getElementById('login-password').value;
   if (!pass) return showToast('Masukkan password.', false);
@@ -414,7 +414,7 @@ document.getElementById('btn-terapkan-filter').addEventListener('click', () => {
   muatSemuaDashboard();
 });
 
-/* ===== NAVIGASI TAB UTAMA ===== */
+ 
 document.getElementById('tabs').addEventListener('click', e => {
   const btn = e.target.closest('button[data-tab]');
   if (!btn) return;
@@ -426,7 +426,7 @@ document.getElementById('tabs').addEventListener('click', e => {
   if (btn.dataset.tab === 'kelola') { muatKelola('karyawan'); initQrWeb(); }
 });
 
-/* ===== NAVIGASI SUB-TAB (dipakai bareng oleh Persetujuan & Kelola Data) ===== */
+ 
 document.querySelectorAll('.subtabs[data-target]').forEach(group => {
   const wrap = document.getElementById(group.dataset.target);
   group.querySelectorAll('button').forEach(b => {
@@ -442,7 +442,7 @@ document.querySelectorAll('.subtabs[data-target]').forEach(group => {
   });
 });
 
-/* ===== LOAD DASHBOARDS ===== */
+ 
 function muatSemuaDashboard() {
   muatDashboardAbsensi();
   muatDashboardOperasional('ambilDashboardPatroli', 'patroli-stats', 'patroli-table');
@@ -496,7 +496,7 @@ async function muatDashboardOperasional(action, statsId, tableId) {
   ).join('') || '<tr><td colspan="4" class="muted">Belum ada staf terdaftar untuk divisi ini.</td></tr>';
 }
 
-/* ===== PERSETUJUAN ===== */
+ 
 async function muatPersetujuan() {
   if (peran !== 'internal') return;
   const [resDaftar, resIjin] = await Promise.all([
@@ -551,7 +551,7 @@ async function prosesIjin(baris, setujui) {
   if (res.sukses) muatPersetujuan();
 }
 
-/* ===== KELOLA DATA (generik untuk 5 data master) ===== */
+ 
 const ENTITAS_KELOLA = {
   karyawan: {
     title: 'Karyawan',
@@ -650,7 +650,7 @@ function renderFormKelola(key, box, cfg) {
         '</div>' +
       '</form>' +
     '</div>';
-  // panel form ditaruh sebelum tabel - simpan slot tabel terpisah supaya tidak perlu render ulang form saat refresh tabel
+  
   box.innerHTML = formHtml + '<div id="kd-' + key + '-tabel"></div>';
 }
 
@@ -719,7 +719,7 @@ async function hapusKelola(key, baris) {
   if (res.sukses) muatKelola(key);
 }
 
-/* ===== QR: titik patroli / tugas kebersihan ===== */
+ 
 function tampilkanQr(kode, judul) {
   if (!kode) return showToast('Titik ini belum punya Kode Titik. Isi dulu "Kode Titik" di form, baru QR bisa dibuat.', false);
   document.getElementById('qr-modal-title').textContent = 'QR: ' + judul;
@@ -740,7 +740,7 @@ function unduhQrDariBox(box, namaFile) {
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 
-/* ===== QR: link akses web karyawan ===== */
+ 
 function initQrWeb() {
   const saved = localStorage.getItem('linkWebKaryawan');
   if (saved) document.getElementById('qrweb-link').value = saved;
@@ -758,7 +758,7 @@ document.getElementById('btn-generate-qrweb').addEventListener('click', () => {
   btnDl.onclick = () => unduhQrDariBox(box, 'QR_Akses_Web_Karyawan');
 });
 
-/* ===== CHATBOT AI ===== */
+ 
 function pushChat(role, text) {
   const log = document.getElementById('chat-log');
   const div = document.createElement('div');
