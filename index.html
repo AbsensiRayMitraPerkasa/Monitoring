@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sistem Absensi Karyawan — RAY</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains&#43;Mono:wght@500;600&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.js"></script>
@@ -35,7 +35,7 @@
   .screen{max-width:480px; margin:0 auto; padding:0 14px 24px;}
   .center-screen{min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; justify-content:center; padding:24px 14px;}
 
-  /* ===== top banner ===== */
+   
   .top-banner{
     background:linear-gradient(160deg,var(--navy),var(--navy-dark));
     border-radius:0 0 22px 22px; padding:26px 20px 34px; text-align:center; color:#fff;
@@ -54,7 +54,7 @@
     padding:16px; margin:14px 0; box-shadow:var(--shadow); position:relative; z-index:1;
   }
 
-  /* ===== login ===== */
+   
   .login-card{max-width:420px; margin:0 auto; width:100%;}
   label{display:block; font-size:12.5px; color:var(--muted); font-weight:600; margin:12px 0 6px;}
   label:first-child{margin-top:0;}
@@ -82,7 +82,7 @@
   .btn-row{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
   .btn-row .btn{margin-top:0;}
 
-  /* ===== dashboard: id card ===== */
+   
   .id-row{display:flex; align-items:center; gap:12px;}
   .avatar{
     width:44px; height:44px; border-radius:12px; background:var(--navy); color:#fff;
@@ -91,7 +91,7 @@
   .id-name{font-size:16px; font-weight:700;}
   .id-role{font-size:12.5px; color:var(--muted); margin-top:1px;}
 
-  /* clock card */
+   
   .clock-date{text-align:center; font-size:12.5px; color:var(--muted); font-weight:600;}
   .clock-time{text-align:center; font-family:var(--f-mono); font-size:34px; font-weight:700; color:var(--navy); margin:2px 0 12px;}
   .pill-row{display:flex; gap:8px; justify-content:center;}
@@ -100,7 +100,7 @@
   }
   .pill.done{background:var(--green-bg); color:var(--green-text);}
 
-  /* gps card */
+   
   .gps-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
   .gps-head .ttl{font-size:14px; font-weight:700; display:flex; align-items:center; gap:6px;}
   .gps-head .ttl .dot{width:7px; height:7px; border-radius:50%; background:var(--green); display:inline-block;}
@@ -131,7 +131,7 @@
   .empty-state{text-align:center; padding:26px 10px; color:var(--muted); font-size:13.5px;}
   .empty-state .big{font-size:26px; margin-bottom:4px;}
 
-  /* top-back for sub pages */
+   
   .top-back{
     display:flex; align-items:center; gap:10px; padding:16px 14px 6px; position:sticky; top:0;
     background:var(--bg); z-index:5;
@@ -139,7 +139,7 @@
   .top-back button{background:#fff; border:1px solid var(--border); color:var(--navy); font-size:16px; cursor:pointer; padding:6px 10px; border-radius:8px;}
   .top-back h2{font-size:17px;}
 
-  /* camera */
+   
   .cam-wrap{position:relative; width:100%; aspect-ratio:3/4; background:#000; border-radius:var(--radius-sm); overflow:hidden; border:1px solid var(--border);}
   .cam-wrap video, .cam-wrap canvas.frame{width:100%; height:100%; object-fit:cover; display:block;}
   .cam-wrap .scan-box{position:absolute; inset:18% 14%; border:2px solid var(--green); border-radius:8px; pointer-events:none; box-shadow:0 0 0 999px rgba(0,0,0,.35);}
@@ -161,7 +161,7 @@
   .divider-or{display:flex; align-items:center; gap:10px; color:var(--muted); font-size:12px; margin:16px 0;}
   .divider-or::before,.divider-or::after{content:''; flex:1; height:1px; background:var(--border);}
 
-  /* modal */
+   
   .modal-overlay{
     position:fixed; inset:0; background:rgba(15,25,40,.55); z-index:60;
     display:flex; align-items:flex-end; justify-content:center;
@@ -172,7 +172,7 @@
   }
   .modal-sheet h3{font-size:16px; margin-bottom:12px;}
 
-  /* bottom nav */
+   
   .navbar{
     position:fixed; bottom:0; left:0; right:0; background:#fff;
     border-top:1px solid var(--border); display:flex; z-index:20;
@@ -194,7 +194,7 @@
 </head>
 <body>
 
-<!-- ================= LOGIN ================= -->
+
 <section id="screen-login" class="screen center-screen">
   <div class="top-banner">
     <div class="logo" id="logo-slot-login">🅡</div>
@@ -216,7 +216,7 @@
   </div>
 </section>
 
-<!-- ================= DAFTAR BARU ================= -->
+
 <section id="screen-daftar" class="screen hidden">
   <div class="top-back"><button id="back-daftar">←</button><h2>Daftar Karyawan Baru</h2></div>
   <div class="card">
@@ -242,7 +242,7 @@
   </div>
 </section>
 
-<!-- ================= HOME / DASHBOARD ================= -->
+
 <section id="screen-home" class="screen hidden">
   <div class="top-banner">
     <div class="logo" id="logo-slot-home">🅡</div>
@@ -307,7 +307,7 @@
   <p class="muted" style="text-align:center; font-size:12px; margin:6px 0 0;">PT. Ray Mitra Perkasa</p>
 </section>
 
-<!-- ================= PRESENSI MODAL (kamera) ================= -->
+
 <div id="modal-presensi" class="modal-overlay hidden">
   <div class="modal-sheet">
     <h3 id="presensi-modal-title">Presensi Masuk</h3>
@@ -325,7 +325,7 @@
   </div>
 </div>
 
-<!-- ================= IJIN ================= -->
+
 <section id="screen-ijin" class="screen hidden">
   <div class="top-back"><button data-back="home">←</button><h2>Ajukan Ijin</h2></div>
   <div class="card">
@@ -359,7 +359,7 @@
   </div>
 </section>
 
-<!-- ================= PATROLI ================= -->
+
 <section id="screen-patroli" class="screen hidden">
   <div class="top-back"><button data-back="home">←</button><h2>Patroli</h2></div>
 
@@ -409,7 +409,7 @@
   </div>
 </section>
 
-<!-- ================= KEGIATAN (CLEANING) ================= -->
+
 <section id="screen-kegiatan" class="screen hidden">
   <div class="top-back"><button data-back="home">←</button><h2>Laporan Kegiatan</h2></div>
 
@@ -488,21 +488,21 @@
 </nav>
 
 <script>
-/* ====================== KONFIGURASI ====================== */
-const API_URL = 'https://script.google.com/macros/s/AKfycbxXUWLfH0gYfs9rHndGbY0eLvV_TcfllYAUQ7uHqcZELrJux1vUCp-33wGdYkoRXKZH/exec';
-const LOGO_URL = 'icon-192.png'; // file logo harus di-upload sejajar dengan index.html di repo GitHub
+ 
+const API_URL = 'https://script.google.com/macros/s/AKfycbzsM7ILm515vsdEjotKEeSqg997305D_qcKZKqhLYNQWWp9E7s/exec';
+const LOGO_URL = 'icon-192.png'; 
 
-/* ====================== STATE ====================== */
+ 
 let sesi = { nama: '', pin: '', bagianKerja: '' };
 let cameraStreams = {};
 let daftarLokasiKerja = [];
 let daftarTitikPatroli = [];
 let daftarTugasKebersihan = [];
-let posisiTerkini = null;        // {lat,lng,akurasi} dari watchPosition
+let posisiTerkini = null;        
 let watchId = null;
 let leafletMap = null, leafletMarker = null;
 
-/* ====================== HELPER API ====================== */
+ 
 async function api(action, payload) {
   try {
     const res = await fetch(API_URL, {
@@ -530,9 +530,9 @@ if (LOGO_URL) {
   document.querySelectorAll('.logo').forEach(el => { el.innerHTML = '<img src="' + LOGO_URL + '" alt="logo">'; });
 }
 
-/* ====================== INFO SISTEM (nama klien, dari spreadsheet klien ini) ====================== */
-// Kode ini sama untuk semua klien - nama klien diambil lewat API, bukan hardcode,
-// supaya file index.html ini bisa dipakai apa adanya di semua repo GitHub klien.
+ 
+
+
 async function muatInfoSistem() {
   const res = await api('infoSistem', {});
   const nama = (res && res.sukses && res.namaKlien) ? res.namaKlien : 'Sistem Absensi Karyawan';
@@ -543,7 +543,7 @@ async function muatInfoSistem() {
   if (elHome) elHome.textContent = nama;
 }
 
-/* ====================== NAVIGASI ====================== */
+ 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
   document.getElementById('screen-' + id).classList.remove('hidden');
@@ -586,8 +586,8 @@ function doLogout() {
   showScreen('login');
 }
 
-/* ====================== KAMERA ====================== */
-let cameraFacing = {}; // key -> 'user' (depan) | 'environment' (belakang), diingat per konteks kamera
+ 
+let cameraFacing = {}; 
 
 async function startCamera(videoEl, key, defaultFacing) {
   key = key || videoEl.id;
@@ -641,7 +641,7 @@ function mulaiScanQR(videoEl, key, onFound) {
   requestAnimationFrame(tick);
 }
 
-/* ====================== LOKASI (GPS REALTIME) ====================== */
+ 
 function jarakMeter(lat1, lon1, lat2, lon2) {
   const R = 6371000, toRad = d => d * Math.PI / 180;
   const dLat = toRad(lat2 - lat1), dLon = toRad(lon2 - lon1);
@@ -707,7 +707,7 @@ document.getElementById('link-kalibrasi').addEventListener('click', (e) => {
   );
 });
 
-/* ====================== LOGIN ====================== */
+ 
 async function muatDaftarNama() {
   const res = await api('daftarKaryawan', {});
   const sel = document.getElementById('login-nama');
@@ -755,7 +755,7 @@ document.getElementById('btn-submit-daftar').addEventListener('click', async () 
   }
 });
 
-/* ====================== DATA MASTER SETELAH LOGIN ====================== */
+ 
 async function muatDataMasterUntukSesi() {
   const resLok = await api('daftarLokasi', {});
   daftarLokasiKerja = resLok.daftar || [];
@@ -770,7 +770,7 @@ async function muatDataMasterUntukSesi() {
   }
 }
 
-/* ====================== HOME / DASHBOARD ====================== */
+ 
 function updateJam() {
   const now = new Date();
   const hariList = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
@@ -839,7 +839,7 @@ async function muatRiwayatInline() {
   ).join('');
 }
 
-/* ====================== PRESENSI (MODAL) ====================== */
+ 
 let presensiJenis = null, presensiFotoB64 = null;
 function bukaModalPresensi(jenis) {
   presensiJenis = jenis;
@@ -896,7 +896,7 @@ document.getElementById('btn-kirim-presensi').addEventListener('click', async ()
   }
 });
 
-/* ====================== IJIN ====================== */
+ 
 let ijinFotoB64 = null;
 function resetIjinScreen() {
   ijinFotoB64 = null;
@@ -947,7 +947,7 @@ document.getElementById('btn-kirim-ijin').addEventListener('click', async () => 
   if (res.sukses) setTimeout(() => showScreen('home'), 1000);
 });
 
-/* ====================== PATROLI ====================== */
+ 
 let patroliState = { namaPos: null, fotoB64: null };
 function resetPatroliScreen() {
   patroliState = { namaPos: null, fotoB64: null };
@@ -1031,7 +1031,7 @@ document.getElementById('btn-kirim-patroli').addEventListener('click', async () 
   if (res.sukses) setTimeout(() => showScreen('home'), 1000);
 });
 
-/* ====================== LAPORAN KEGIATAN (CLEANING) ====================== */
+ 
 let kegiatanState = { tugas: null, area: null, fotoSebelum: null, fotoSesudah: null };
 function resetKegiatanScreen() {
   kegiatanState = { tugas: null, area: null, fotoSebelum: null, fotoSesudah: null };
@@ -1141,7 +1141,7 @@ document.getElementById('btn-kirim-kegiatan').addEventListener('click', async ()
   if (res.sukses) setTimeout(() => showScreen('home'), 1000);
 });
 
-/* ====================== INIT ====================== */
+ 
 muatInfoSistem();
 muatDaftarNama();
 showScreen('login');
