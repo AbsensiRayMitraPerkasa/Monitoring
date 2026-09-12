@@ -321,7 +321,8 @@
 <div id="toast" class="toast hidden"></div>
 
 <script>
-const API_URL = 'https://eafkcyibdrmverragbcs.supabase.co/rest/v1/';
+const API_URL = 'https://eafkcyibdrmverragbcs.supabase.co/functions/v1/api';
+const SUPABASE_ANON_KEY = 'sb_publishable_TtYDaWAYHxB9eqWfBKPWPA_AYAZUJr8';
 
 let adminPassword = '';
 let peran = '';
@@ -331,7 +332,11 @@ async function api(action, payload) {
   try {
     const res = await fetch(API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'apikey': SUPABASE_ANON_KEY
+      },
       body: JSON.stringify(Object.assign({ action }, payload || {}))
     });
     return await res.json();
