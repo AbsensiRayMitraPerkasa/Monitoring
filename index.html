@@ -615,7 +615,13 @@ async function toggleCamera(videoEl, key) {
 }
 function stopCameraByKey(key) {
   const s = cameraStreams[key];
-  if (s) { s.getTracks().forEach(t => t.stop()); delete cameraStreams[key]; }
+  if (!s) return;
+  if (typeof s.getTracks === 'function') {
+    s.getTracks().forEach(t => t.stop());
+  } else if (typeof s.stop === 'function') {
+    s.stop();
+  }
+  delete cameraStreams[key];
 }
 function stopAllCameras() { Object.keys(cameraStreams).forEach(stopCameraByKey); }
 function captureFrame(videoEl, canvasEl) {
