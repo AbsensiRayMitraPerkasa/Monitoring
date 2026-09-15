@@ -334,8 +334,8 @@ async function api(action, payload) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-        'apikey': SUPABASE_ANON_KEY
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
       },
       body: JSON.stringify(Object.assign({ action }, payload || {}))
     });
@@ -522,8 +522,8 @@ function renderPendaftaran(list) {
       '<div class="row"><span class="k">PIN</span><span class="mono">'+d.pin+'</span></div>' +
       '<div class="row"><span class="k">Tanggal Daftar</span><span class="mono">'+d.tanggalDaftar+'</span></div>' +
       '<div class="actions">' +
-        '<button class="btn btn-green btn-sm" onclick="prosesPendaftaran('+d.baris+',true)">Setujui</button>' +
-        '<button class="btn btn-danger btn-sm" onclick="prosesPendaftaran('+d.baris+',false)">Tolak</button>' +
+        '<button class="btn btn-green btn-sm" onclick="prosesPendaftaran(\''+d.id+'\',true)">Setujui</button>' +
+        '<button class="btn btn-danger btn-sm" onclick="prosesPendaftaran(\''+d.id+'\',false)">Tolak</button>' +
       '</div>' +
     '</div>'
   ).join('');
@@ -539,19 +539,19 @@ function renderIjin(list) {
       '<div class="row"><span class="k">Keterangan</span><span>'+(d.keterangan||'-')+'</span></div>' +
       '<div class="row"><span class="k">Bukti</span><a href="'+d.linkBukti+'" target="_blank" rel="noopener">Lihat File</a></div>' +
       '<div class="actions">' +
-        '<button class="btn btn-green btn-sm" onclick="prosesIjin('+d.baris+',true)">Setujui</button>' +
-        '<button class="btn btn-danger btn-sm" onclick="prosesIjin('+d.baris+',false)">Tolak</button>' +
+        '<button class="btn btn-green btn-sm" onclick="prosesIjin(\''+d.id+'\',true)">Setujui</button>' +
+        '<button class="btn btn-danger btn-sm" onclick="prosesIjin(\''+d.id+'\',false)">Tolak</button>' +
       '</div>' +
     '</div>'
   ).join('');
 }
-async function prosesPendaftaran(baris, setujui) {
-  const res = await api(setujui ? 'setujuiPendaftaran' : 'tolakPendaftaran', { password: adminPassword, baris });
+async function prosesPendaftaran(id, setujui) {
+  const res = await api(setujui ? 'setujuiPendaftaran' : 'tolakPendaftaran', { password: adminPassword, id });
   showToast(res.pesan, res.sukses);
   if (res.sukses) muatPersetujuan();
 }
-async function prosesIjin(baris, setujui) {
-  const res = await api(setujui ? 'setujuiIjin' : 'tolakIjin', { password: adminPassword, baris });
+async function prosesIjin(id, setujui) {
+  const res = await api(setujui ? 'setujuiIjin' : 'tolakIjin', { password: adminPassword, id });
   showToast(res.pesan, res.sukses);
   if (res.sukses) muatPersetujuan();
 }
@@ -672,9 +672,9 @@ function renderTabelKelola(key, box, cfg) {
           ? daftar.map(d =>
               '<tr>' + cfg.fields.map(f => '<td>' + (d[f.key] !== undefined && d[f.key] !== null ? d[f.key] : '') + '</td>').join('') +
               '<td class="action-cell">' +
-                '<button class="btn btn-outline btn-sm" onclick="isiFormEdit(\'' + key + '\', ' + d.baris + ')">Edit</button>' +
+                '<button class="btn btn-outline btn-sm" onclick="isiFormEdit(\'' + key + '\', \'' + d.id + '\')">Edit</button>' +
                 (cfg.qr ? '<button class="btn btn-outline btn-sm" onclick="tampilkanQr(\'' + String(d[cfg.qrField] || '').replace(/'/g,"\\'") + '\', \'' + String(d[cfg.qrJudulField] || '').replace(/'/g,"\\'") + '\')">QR</button>' : '') +
-                '<button class="btn btn-danger btn-sm" onclick="hapusKelola(\'' + key + '\', ' + d.baris + ')">Hapus</button>' +
+                '<button class="btn btn-danger btn-sm" onclick="hapusKelola(\'' + key + '\', \'' + d.id + '\')">Hapus</button>' +
               '</td></tr>'
             ).join('')
           : '<tr><td colspan="' + (cfg.fields.length + 1) + '" class="muted">Belum ada data.</td></tr>') +
@@ -683,11 +683,11 @@ function renderTabelKelola(key, box, cfg) {
   tabelBox.innerHTML = html;
 }
 
-function isiFormEdit(key, baris) {
+function isiFormEdit(key, id) {
   const cfg = ENTITAS_KELOLA[key];
-  const item = (kelolaCache[key] || []).find(x => x.baris === baris);
+  const item = (kelolaCache[key] || []).find(x => x.id === id);
   if (!item) return;
-  document.getElementById('kd-' + key + '-baris').value = baris;
+  document.getElementById('kd-' + key + '-baris').value = id;
   cfg.fields.forEach(f => {
     const el = document.getElementById('kd-' + key + '-' + f.key);
     if (el) el.value = (item[f.key] !== undefined && item[f.key] !== null) ? item[f.key] : '';
@@ -703,12 +703,12 @@ function resetFormKelola(key) {
 }
 async function simpanKelola(key) {
   const cfg = ENTITAS_KELOLA[key];
-  const baris = document.getElementById('kd-' + key + '-baris').value;
+  const id = document.getElementById('kd-' + key + '-baris').value;
   const payload = { password: adminPassword };
   cfg.fields.forEach(f => { payload[f.key] = document.getElementById('kd-' + key + '-' + f.key).value.trim(); });
   let res;
-  if (baris) {
-    payload.baris = parseInt(baris, 10);
+  if (id) {
+    payload.id = id;
     res = await api(cfg.editAction, payload);
   } else {
     res = await api(cfg.addAction, payload);
@@ -716,10 +716,10 @@ async function simpanKelola(key) {
   showToast(res.pesan, res.sukses);
   if (res.sukses) { resetFormKelola(key); muatKelola(key); }
 }
-async function hapusKelola(key, baris) {
+async function hapusKelola(key, id) {
   if (!confirm('Yakin ingin menghapus data ini?')) return;
   const cfg = ENTITAS_KELOLA[key];
-  const res = await api(cfg.delAction, { password: adminPassword, baris });
+  const res = await api(cfg.delAction, { password: adminPassword, id });
   showToast(res.pesan, res.sukses);
   if (res.sukses) muatKelola(key);
 }
